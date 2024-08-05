@@ -16,8 +16,23 @@ const io = new Server(expressServer, {
 
 io.on("connection", (socket) => {
   console.log(`User ${socket.id}`);
+  // Listening to
+  socket.emit("message", "welcome to chat app");
+  socket.broadcast.emit("message", `User ${socket.id} connected`);
+  // Listening for a message event
   socket.on("message", (data) => {
     console.log(data);
+
     io.emit("message", data);
+  });
+  socket.on("typing", () => {
+    socket.broadcast.emit("typing");
+  });
+  socket.on("not-typing", () => {
+    socket.broadcast.emit("not-typing");
+  });
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("message", `User ${socket.id} disconnected`);
   });
 });
